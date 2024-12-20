@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSG in Go</title>
+</head>
+<body>
+   <ol>
+    {{range .}}
+        <li><a href="{{.FileName}}">{{.Title}}</a></li>
+    {{end}}
+   </ol> 
+</body>
+</html>

@@ -1,0 +1,4 @@
+<h1>My first blog post</h1>
+<br>
+<div id="blog-content"><p>Hello, this is my first blog post. I hope you enjoy it.</p>
+</div>

@@ -3,16 +3,21 @@ package blog
 import (
 	"bufio"
 	"bytes"
+	"embed"
 	"fmt"
+	"html/template"
 	"io"
 	"io/fs"
 	"strings"
+
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 type Post struct{
 	Title string
-	Tags []string
 	Body string
+	FileName string
 }
 func NewPostFromFs(filesystem fs.FS) ([]Post, error){
 	dir, err := fs.ReadDir(filesystem,".")
@@ -36,7 +41,7 @@ func getPost(filesystem fs.FS, filename string) (Post, error){
 		return Post{}, err
 	}
 	defer postFile.Close()
-	return newPost(postFile)
+	return newPost(postFile, filename)
 }
 
 const (
@@ -44,7 +49,7 @@ const (
 	tagsSeparator = "Tags: "
 )
 
-func newPost(postfile io.Reader) (Post,error){
+func newPost(postfile io.Reader, filename string) (Post,error){
 
 	scanner := bufio.NewScanner(postfile)
 	readMetaLine := func(tagName string) string{
@@ -54,8 +59,8 @@ func newPost(postfile io.Reader) (Post,error){
 
 	return Post{
 		Title: readMetaLine(titleSeparator),	
-		Tags: strings.Split(readMetaLine(tagsSeparator),", "),
 		Body: readBody(scanner),
+		FileName: strings.TrimSuffix(filename, ".md"),
 	},nil
 }
 
@@ -66,4 +71,40 @@ func readBody(scanner *bufio.Scanner) string{
 		fmt.Fprintln(&buf, scanner.Text())
 	}
 	return strings.TrimSuffix(buf.String(),"\n")
+}
+var (
+	//go:embed "templates/*"
+	postTemplates embed.FS
+)
+type PostRenderer struct{
+	templ *template.Template
+	mdParser *parser.Parser 
+}
+func NewPostRenderer() (*PostRenderer, error){
+	templ, err := template.ParseFS(postTemplates, "templates/*.gohtml")
+	if err != nil{
+		return nil, err
+	}
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
+	parser := parser.NewWithExtensions(extensions)
+
+	return &PostRenderer{templ: templ, mdParser: parser}, nil
+}
+
+func (pr *PostRenderer) Render(w io.Writer, post Post) error{
+	return pr.templ.ExecuteTemplate(w, "blog.gohtml", newPostVM(post, pr))
+}
+type postViewModel struct {
+	Post
+	HTMLBody template.HTML
+}
+
+func newPostVM(p Post, r *PostRenderer) postViewModel {
+	vm := postViewModel{Post: p}
+	vm.HTMLBody = template.HTML(markdown.ToHTML([]byte(p.Body), r.mdParser, nil))
+	return vm
+}
+
+func (r *PostRenderer) RenderIndex(w io.Writer, posts []Post) error{
+	return r.templ.ExecuteTemplate(w,"index.gohtml",posts)
 }
