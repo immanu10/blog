@@ -1,6 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - Hello World!</title>
+    
+    <style>
+        :root{
+            --bg-color: #111111;
+            --text-color: #ffffff;
+            --primary-color: #63cce7;
+        }
+        nav{
+            padding: 1em;
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        } 
+        nav div{
+            display: flex;
+            gap: 1em;
+        }
+        nav h1 a{
+            text-decoration: none; 
+            color: var(--primary-color);
+        }
+        nav h1 a:hover{
+            text-decoration: none; 
+        }
+        body{
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+        }
+        main{
+            max-width: 640px;
+            padding: 0 1em 1em 1em;
+            margin: 0 auto;
+        }
+        ul{
+            padding: 0;
+            list-style: none;
+        }
+        a{
+            color: var(--text-color);
+            text-underline-offset: 0.3em;
+        }
+        a:hover{
+            text-decoration: wavy underline;
+            text-decoration-color: var(--primary-color);
+        }
+    </style>
+
+</head>
+<body>
+    <nav>
+        <h1><a href="/">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<div>
+    <time>22 Dec 2024</time>
+</div>
 <h1>Hello World!</h1>
 <br>
 <div id="blog-content"><p>Welcome to my blog site.</p>
 
 <p>Learning GoLang for a while now and its been fun.</p>
+
+<p>I started this blog to test how easy it is to build simple static site using go.</p>
 </div>
+
+    </main>
+</body>
+</html>

@@ -1,15 +1,78 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSG in Go</title>
+    <title>immanu10 - Blog</title>
+    
+    <style>
+        :root{
+            --bg-color: #111111;
+            --text-color: #ffffff;
+            --primary-color: #63cce7;
+        }
+        nav{
+            padding: 1em;
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        } 
+        nav div{
+            display: flex;
+            gap: 1em;
+        }
+        nav h1 a{
+            text-decoration: none; 
+            color: var(--primary-color);
+        }
+        nav h1 a:hover{
+            text-decoration: none; 
+        }
+        body{
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+        }
+        main{
+            max-width: 640px;
+            padding: 0 1em 1em 1em;
+            margin: 0 auto;
+        }
+        ul{
+            padding: 0;
+            list-style: none;
+        }
+        a{
+            color: var(--text-color);
+            text-underline-offset: 0.3em;
+        }
+        a:hover{
+            text-decoration: wavy underline;
+            text-decoration-color: var(--primary-color);
+        }
+    </style>
+
 </head>
 <body>
-   <ol>
-    
-        <li><a href="hello-world">Hello World!</a></li>
-    
-   </ol> 
+    <nav>
+        <h1><a href="/">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<ul>
+
+    <li><a href="hello-world.html">Hello World!</a></li>
+
+</ul> 
+
+    </main>
 </body>
 </html>

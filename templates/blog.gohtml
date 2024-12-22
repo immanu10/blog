@@ -1,3 +1,8 @@
+{{template "top" .}}
+<div>
+    <time>{{.Date}}</time>
+</div>
 <h1>{{.Title}}</h1>
 <br>
 <div id="blog-content">{{.HTMLBody}}</div>
+{{template "bottom" .}}

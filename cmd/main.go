@@ -50,6 +50,6 @@ func main(){
 
 	indexRendererr := pr.RenderIndex(file, posts)
 	if indexRendererr != nil{
-		log.Fatalf("Error rendering index.html file: %v", err)
+		log.Fatalf("Error rendering index.html file: %+v", err)
 	}
 }

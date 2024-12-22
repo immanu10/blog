@@ -11,10 +11,12 @@ var SamplePost = blog.Post{
 		Title: "My first blog post",
 		Body:"Hello, this is my first blog post. I hope you enjoy it." ,
 		FileName: "hello-world",
+		Date: "22 Dec 2024",
 }
 
 func TestCreateBlogPosts(t *testing.T) {
 	body := `Title: My first blog post
+Date: 22 Dec 2024
 ---
 Hello, this is my first blog post. I hope you enjoy it.`
 

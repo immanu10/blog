@@ -18,6 +18,7 @@ type Post struct{
 	Title string
 	Body string
 	FileName string
+	Date string
 }
 func NewPostFromFs(filesystem fs.FS) ([]Post, error){
 	dir, err := fs.ReadDir(filesystem,".")
@@ -46,7 +47,7 @@ func getPost(filesystem fs.FS, filename string) (Post, error){
 
 const (
 	titleSeparator = "Title: "
-	tagsSeparator = "Tags: "
+	dateSeparator = "Date: "
 )
 
 func newPost(postfile io.Reader, filename string) (Post,error){
@@ -59,6 +60,7 @@ func newPost(postfile io.Reader, filename string) (Post,error){
 
 	return Post{
 		Title: readMetaLine(titleSeparator),	
+		Date: readMetaLine(dateSeparator),
 		Body: readBody(scanner),
 		FileName: strings.TrimSuffix(filename, ".md"),
 	},nil
@@ -97,14 +99,23 @@ func (pr *PostRenderer) Render(w io.Writer, post Post) error{
 type postViewModel struct {
 	Post
 	HTMLBody template.HTML
+	SeoTitle string
 }
 
 func newPostVM(p Post, r *PostRenderer) postViewModel {
-	vm := postViewModel{Post: p}
+	vm := postViewModel{Post: p,SeoTitle: p.Title}
 	vm.HTMLBody = template.HTML(markdown.ToHTML([]byte(p.Body), r.mdParser, nil))
 	return vm
 }
 
 func (r *PostRenderer) RenderIndex(w io.Writer, posts []Post) error{
-	return r.templ.ExecuteTemplate(w,"index.gohtml",posts)
+	indexViewModel := struct{
+		Posts []Post
+		SeoTitle string
+	}{
+		Posts: posts,
+		SeoTitle: "Blog",
+	}
+	return r.templ.ExecuteTemplate(w,"index.gohtml",indexViewModel)
+
 }

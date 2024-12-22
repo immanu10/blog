@@ -1,4 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - My first blog post</title>
+    
+    <style>
+        :root{
+            --bg-color: #111111;
+            --text-color: #ffffff;
+            --primary-color: #63cce7;
+        }
+        nav{
+            padding: 1em;
+            color: var(--primary-color);
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        } 
+        nav div{
+            display: flex;
+            gap: 1em;
+        }
+        body{
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+        }
+        main{
+            max-width: 640px;
+            padding: 0 1em 1em 1em;
+            margin: 0 auto;
+        }
+        ul{
+            padding: 0;
+            list-style: none;
+        }
+        a{
+            color: var(--text-color);
+            text-underline-offset: 0.3em;
+        }
+        a:hover{
+            text-decoration: wavy underline;
+        }
+    </style>
+
+</head>
+<body>
+    <nav>
+        <h1>immanu10s blog</h1>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<a href="/">go back</a>
 <h1>My first blog post</h1>
 <br>
 <div id="blog-content"><p>Hello, this is my first blog post. I hope you enjoy it.</p>
 </div>
+
+    </main>
+</body>
+</html>

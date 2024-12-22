@@ -1,11 +1,30 @@
-
+{{define "top"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>immanu10 - Blog</title>
-    
+    <title>immanu10 - {{.SeoTitle}}</title>
+    {{template "styles" .}}
+</head>
+<body>
+    <nav>
+        <h1><a href="/">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+{{end}}
+
+{{define "bottom"}}
+    </main>
+</body>
+</html>
+{{end}}
+
+{{define "styles"}}
     <style>
         :root{
             --bg-color: #111111;
@@ -14,7 +33,6 @@
         }
         nav{
             padding: 1em;
-            color: var(--primary-color);
             max-width: 640px;
             margin: 0 auto;
             display: flex;
@@ -24,6 +42,13 @@
         nav div{
             display: flex;
             gap: 1em;
+        }
+        nav h1 a{
+            text-decoration: none; 
+            color: var(--primary-color);
+        }
+        nav h1 a:hover{
+            text-decoration: none; 
         }
         body{
             font-family: sans-serif;
@@ -46,26 +71,7 @@
         }
         a:hover{
             text-decoration: wavy underline;
+            text-decoration-color: var(--primary-color);
         }
     </style>
-
-</head>
-<body>
-    <nav>
-        <h1>immanu10s blog</h1>
-        <div>
-            <a href="https://github.com/immanu10/" target="_blank">github</a>
-            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
-        </div>
-    </nav>
-    <main>
-
-<ul>
-
-    <li><a href="hello-world.html">My first blog post</a></li>
-
-</ul> 
-
-    </main>
-</body>
-</html>
+{{end}}
