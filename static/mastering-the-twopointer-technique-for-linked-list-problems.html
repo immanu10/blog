@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - Mastering the Two-Pointer Technique for Linked List Problems</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="/blog">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<div>
+    <time>01-Jan-2025</time>
+</div>
+<h1>Mastering the Two-Pointer Technique for Linked List Problems</h1>
+<br>
+<div id="blog-content"><p>The two-pointer technique is a powerful and efficient approach to solving many problems involving linked lists in data structure and algorithms interviews.  This technique involves using two pointers, often called <code>slow</code> and <code>fast</code>, to traverse the linked list simultaneously, but at different speeds. This allows you to detect cycles, find the middle of a list, or identify specific nodes relative to others without needing to traverse the entire list multiple times.</p>
+
+<p>Let&rsquo;s explore how to use this technique to detect a cycle (a loop) in a linked list.  A cycle exists if a node in the list points back to a previously visited node.</p>
+
+<p><strong>The Algorithm:</strong></p>
+
+<ol>
+<li><strong>Initialization:</strong> Start both <code>slow</code> and <code>fast</code> pointers at the head of the linked list.</li>
+<li><strong>Iteration:</strong> Move the <code>slow</code> pointer one step at a time, and the <code>fast</code> pointer two steps at a time.</li>
+<li><strong>Cycle Detection:</strong> If the <code>fast</code> pointer reaches the end of the list (i.e., <code>fast</code> is <code>null</code>), there is no cycle.  If the <code>slow</code> and <code>fast</code> pointers ever meet at the same node, a cycle exists.</li>
+</ol>
+
+<p><strong>Python Code:</strong></p>
+
+<pre><code class="language-python">class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def hasCycle(head):
+    &quot;&quot;&quot;
+    Detects if a linked list has a cycle using the two-pointer technique.
+
+    Args:
+        head: The head of the linked list.
+
+    Returns:
+        True if a cycle exists, False otherwise.
+    &quot;&quot;&quot;
+    slow = head
+    fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    return False
+
+
+#Example usage:
+head = ListNode(1)
+head.next = ListNode(2)
+head.next.next = ListNode(3)
+head.next.next.next = ListNode(4)
+head.next.next.next.next = head.next #Creates a cycle
+
+print(hasCycle(head)) # Output: True
+
+head2 = ListNode(1)
+head2.next = ListNode(2)
+head2.next.next = ListNode(3)
+print(hasCycle(head2)) # Output: False
+</code></pre>
+
+<p><strong>Why this works:</strong></p>
+
+<p>If there&rsquo;s a cycle, the <code>fast</code> pointer will eventually lap the <code>slow</code> pointer.  This is because the <code>fast</code> pointer moves twice as fast. When they meet, it confirms the presence of a cycle. If there&rsquo;s no cycle, the <code>fast</code> pointer will reach the end of the list (<code>null</code>), indicating no cycle.</p>
+
+<p>The two-pointer technique is elegantly simple yet incredibly powerful for solving various linked list problems. Mastering this technique is a valuable asset for anyone preparing for data structure and algorithm interviews.  It demonstrates a strong understanding of algorithms and efficient problem-solving skills.</p>
+</div>
+
+    </main>
+</body>
+</html>

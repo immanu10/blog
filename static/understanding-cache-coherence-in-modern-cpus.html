@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - Understanding Cache Coherence in Modern CPUs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="/blog">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<div>
+    <time>01-Jan-2025</time>
+</div>
+<h1>Understanding Cache Coherence in Modern CPUs</h1>
+<br>
+<div id="blog-content"><p>Modern CPUs employ sophisticated caching mechanisms to bridge the speed gap between the processor and slower main memory.  This dramatically improves performance, but introduces a new challenge: cache coherence.  Cache coherence ensures that all cached copies of a data item remain consistent, preventing data corruption and ensuring program correctness in multi-core systems.</p>
+
+<p>Imagine a scenario with two CPU cores, Core A and Core B, both accessing the same memory location, <code>x</code>.  If Core A reads <code>x</code> and caches its value (say, 5), and then Core B modifies <code>x</code> to 10, Core A&rsquo;s cached copy becomes stale.  This inconsistency could lead to unpredictable results.  This is where cache coherence protocols come into play.</p>
+
+<p>Several protocols exist, but a common one is the <strong>MESI protocol</strong> (Modified, Exclusive, Shared, Invalid).  Let&rsquo;s break down its states:</p>
+
+<ul>
+<li><strong>Invalid:</strong> The cache line is not valid and doesn&rsquo;t hold a copy of the data.</li>
+<li><strong>Exclusive:</strong> Only one cache holds a copy of the data, which is clean (unchanged from main memory).</li>
+<li><strong>Shared:</strong> Multiple caches hold copies of the data, all of which are clean.</li>
+<li><strong>Modified:</strong> One cache holds a dirty copy of the data, meaning it has been modified and differs from main memory.</li>
+</ul>
+
+<p>Let&rsquo;s trace our example through MESI:</p>
+
+<ol>
+<li><strong>Initial State:</strong> Both Core A and Core B have <code>x</code> in the <code>Invalid</code> state.</li>
+<li>Core A reads <code>x</code> (value 5):  <code>x</code> moves to the <code>Exclusive</code> state in Core A&rsquo;s cache.</li>
+<li>Core B reads <code>x</code>: The cache coherence mechanism detects that Core A has an <code>Exclusive</code> copy.  It sends a request to Core A, which responds, and both cores now have <code>x</code> in the <code>Shared</code> state.</li>
+<li>Core B writes <code>x</code> to 10: <code>x</code> in Core B&rsquo;s cache moves to the <code>Modified</code> state.  A notification is sent to Core A to invalidate its copy (<code>Invalid</code> state).</li>
+<li>Core A attempts to access <code>x</code>: It finds that its copy is <code>Invalid</code>.  It requests the latest value from Core B (or main memory if Core B no longer holds it), obtaining the updated value 10.</li>
+</ol>
+
+<p>This protocol guarantees that only one core can hold a <code>Modified</code> copy at any time, preventing inconsistencies.  The implementation details of this communication and state management are complex and handled by the CPU&rsquo;s hardware.  However, understanding the basic principles of cache coherence is crucial for writing efficient and correct multi-threaded programs and understanding performance bottlenecks.  In a more realistic scenario, with more cores and cache levels, the complexity increases significantly, involving intricate snooping and directory-based protocols, but the core principle of maintaining consistency remains the same.</p>
+</div>
+
+    </main>
+</body>
+</html>

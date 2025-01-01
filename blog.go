@@ -36,6 +36,10 @@ func NewPostFromFs(filesystem fs.FS) ([]Post, error){
 	return posts, nil
 }
 
+func NewPostFromFile(filesystem fs.FS, filename string) (Post, error){
+	return getPost(filesystem, filename)
+}
+
 func getPost(filesystem fs.FS, filename string) (Post, error){
 	postFile, err := filesystem.Open(filename)
 	if err != nil{
