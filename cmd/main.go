@@ -18,7 +18,6 @@ func main(){
 			return
 		}
 	}
-	return
 	scanner, err := genblogai.GenerateBlogFromAI()
 	if err != nil{
 		log.Fatalf("Error generating blog from AI: %v", err)

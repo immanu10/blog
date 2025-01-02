@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - Go Interfaces</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="/blog">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<div>
+    <time>02-Jan-2025</time>
+</div>
+<h1>Go Interfaces</h1>
+<br>
+<div id="blog-content"><p>Interfaces in Go provide a way to specify the behavior of an object.  They&rsquo;re a powerful tool for achieving abstraction and polymorphism, allowing you to write more flexible and reusable code.  Unlike some languages, interfaces in Go are <em>implicitly</em> satisfied.  This means you don&rsquo;t explicitly declare that a type implements an interface.  If a type has the methods defined by the interface, it automatically implements it.</p>
+
+<p><strong>Defining an Interface</strong></p>
+
+<p>An interface is defined using the <code>interface</code> keyword, followed by the interface name and a set of method signatures.</p>
+
+<pre><code class="language-go">type Speaker interface {
+    Speak() string
+}
+</code></pre>
+
+<p>This <code>Speaker</code> interface defines a single method <code>Speak()</code> which returns a string.</p>
+
+<p><strong>Implementing an Interface</strong></p>
+
+<p>Let&rsquo;s create two types, <code>Dog</code> and <code>Cat</code>, that both implement the <code>Speaker</code> interface:</p>
+
+<pre><code class="language-go">type Dog struct {
+    name string
+}
+
+func (d Dog) Speak() string {
+    return &quot;Woof! My name is &quot; + d.name
+}
+
+type Cat struct {
+    name string
+}
+
+func (c Cat) Speak() string {
+    return &quot;Meow! My name is &quot; + c.name
+}
+</code></pre>
+
+<p>Notice that neither <code>Dog</code> nor <code>Cat</code> explicitly states that it implements <code>Speaker</code>.  They simply define the <code>Speak()</code> method with the correct signature.</p>
+
+<p><strong>Using Interfaces</strong></p>
+
+<p>The power of interfaces comes from the ability to use them as generic types.  Here&rsquo;s a function that accepts anything that implements the <code>Speaker</code> interface:</p>
+
+<pre><code class="language-go">func MakeSpeak(s Speaker) {
+    fmt.Println(s.Speak())
+}
+
+func main() {
+    dog := Dog{name: &quot;Fido&quot;}
+    cat := Cat{name: &quot;Whiskers&quot;}
+
+    MakeSpeak(dog) // Output: Woof! My name is Fido
+    MakeSpeak(cat) // Output: Meow! My name is Whiskers
+}
+</code></pre>
+
+<p>The <code>MakeSpeak</code> function doesn&rsquo;t care whether it&rsquo;s given a <code>Dog</code>, a <code>Cat</code>, or any other type, as long as it implements the <code>Speaker</code> interface.</p>
+
+<p><strong>Empty Interface</strong></p>
+
+<p>The empty interface <code>interface{}</code> is a special case. It has no methods, meaning <em>every</em> type in Go implicitly implements it.  This is useful when you want to write functions that can operate on values of any type.</p>
+
+<pre><code class="language-go">func PrintAnything(v interface{}) {
+    fmt.Println(v)
+}
+
+func main() {
+    PrintAnything(5)       // Output: 5
+    PrintAnything(&quot;hello&quot;) // Output: hello
+    PrintAnything(true)    // Output: true
+}
+
+</code></pre>
+
+<p><strong>Type Assertions</strong></p>
+
+<p>When using the empty interface, you might need to determine the underlying type of a value.  This is done using a <em>type assertion</em>:</p>
+
+<pre><code class="language-go">func PrintType(v interface{}) {
+    if s, ok := v.(string); ok {
+        fmt.Println(&quot;It's a string:&quot;, s)
+    } else {
+        fmt.Println(&quot;It's not a string&quot;)
+    }
+}
+</code></pre>
+
+<p>Interfaces in Go are a crucial part of the language, facilitating code reuse, flexibility, and strong typing. Understanding their implicit nature and versatile applications is key to writing effective Go programs.</p>
+</div>
+
+    </main>
+</body>
+</html>
