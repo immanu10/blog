@@ -11,7 +11,14 @@ import (
 
 
 func main(){
-
+	args := os.Args
+	if len(args)>1{
+		if args[1] == "build-all-posts"{
+			readAndRenderAllPost()
+			return
+		}
+	}
+	return
 	scanner, err := genblogai.GenerateBlogFromAI()
 	if err != nil{
 		log.Fatalf("Error generating blog from AI: %v", err)
@@ -72,6 +79,7 @@ func main(){
 		log.Fatalf("Error rendering index.html file: %+v", err)
 	}
 }
+
 
 func readAndRenderAllPost(){
 
