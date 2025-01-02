@@ -1,5 +1,5 @@
 Title: Hello World!
-Date: 22 Dec 2024
+Date: 22-Dec-2024
 ---
 Welcome to my blog site.
 

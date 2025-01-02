@@ -8,7 +8,9 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/parser"
@@ -33,6 +35,8 @@ func NewPostFromFs(filesystem fs.FS) ([]Post, error){
 		}
 		posts = append(posts, post)
 	}
+	sortPostsByDate(posts)
+
 	return posts, nil
 }
 
@@ -122,4 +126,24 @@ func (r *PostRenderer) RenderIndex(w io.Writer, posts []Post) error{
 	}
 	return r.templ.ExecuteTemplate(w,"index.gohtml",indexViewModel)
 
+}
+
+func sortPostsByDate(posts []Post) {
+	// Define the date layout for parsing
+	const dateLayout = "02-Jan-2006"
+
+	sort.Slice(posts, func(i, j int) bool {
+		// Parse the dates
+		dateI, err1 := time.Parse(dateLayout, posts[i].Date)
+		dateJ, err2 := time.Parse(dateLayout, posts[j].Date)
+
+		// Handle parsing errors by assuming invalid dates are older
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Warning: Invalid date format for %s or %s\n", posts[i].Date, posts[j].Date)
+			return err2 == nil // Keep valid dates before invalid ones
+		}
+
+		// Compare dates
+		return dateI.After(dateJ)
+	})
 }
