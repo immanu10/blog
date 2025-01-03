@@ -19,7 +19,7 @@ const (
 	systemInstruction = "You are a technical blog writer. Pick any single concept from the topic provided by the user and generator a .md string/blog post. Follow this template structure:\nTitle: A very very short concise title.\nA well-structured explanation of the concept with examples or code snippets if required.(Do not use python, use Go or JavaScript)"
 )
 
-var topicsList = []string{"Javascript Interview Questions", "Typescript tips and tricks","Go conpects and features","High Level System Design Interview Questions","Low Level System Design Interview Questions", "DSA Interview Questions","DSA concepts", "React Interview Questions"}
+var topicsList = []string{"Javascript Interview Questions", "Typescript tips and tricks","Go conpects and features","High Level System Design Interview Questions","Low Level System Design Interview Questions", "DSA Interview Questions","DSA problem solving techniques", "Vim tips and tricks","Vim motion","React Interview Questions"}
 
 
 func GenerateBlogFromAI() (*bufio.Scanner, error){
