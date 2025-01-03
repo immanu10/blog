@@ -14,7 +14,7 @@ func main(){
 	args := os.Args
 	if len(args)>1{
 		if args[1] == "build-all-posts"{
-			readAndRenderAllPost()
+			readAndRenderAllMdPost()
 			return
 		}
 	}
@@ -23,6 +23,19 @@ func main(){
 	if err != nil{
 		panic(err)
 	}
+
+	if len(args)>1{
+		if args[1] == "build-index"{
+			renderIndexPage(pr)
+			return
+		}
+	}
+
+	createAndRenderAIPost(pr)
+	renderIndexPage(pr)
+}
+
+func createAndRenderAIPost(pr *blog.PostRenderer){
 
 	scanner, err := genblogai.GenerateBlogFromAI()
 	if err != nil{
@@ -61,7 +74,34 @@ func main(){
 	if renderErr != nil{
 		log.Fatalf("Error rendering %s.md file: %v", post.FileName, err)
 	}
+}
 
+func readAndRenderAllMdPost(){
+
+	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
+	if err != nil{
+		log.Fatalf("Error reading posts from filesystem: %v", err)
+	}
+
+	for _, post := range posts{
+		pr, err := blog.NewPostRenderer()
+		if err != nil{
+			panic(err)
+		}
+		htmlFile, err := os.Create(path.Join("static", post.FileName+".html"))
+		if err != nil{
+			log.Fatalf("Error creating %s.html file: %v", post.FileName, err)
+		}
+		defer htmlFile.Close()
+
+		renderErr := pr.Render(htmlFile, post)
+		if renderErr != nil{
+			log.Fatalf("Error rendering %s.md file: %v", post.FileName, err)
+		}
+	}
+}
+
+func renderIndexPage(pr *blog.PostRenderer){
 
 	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
 	if err != nil{
@@ -78,32 +118,5 @@ func main(){
 	indexRendererr := pr.RenderIndex(file, posts)
 	if indexRendererr != nil{
 		log.Fatalf("Error rendering index.html file: %+v", err)
-	}
-}
-
-
-func readAndRenderAllPost(){
-
-	pr, err := blog.NewPostRenderer()
-	if err != nil{
-		panic(err)
-	}
-
-	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
-	if err != nil{
-		log.Fatalf("Error reading posts from filesystem: %v", err)
-	}
-
-	for _, post := range posts{
-		htmlFile, err := os.Create(path.Join("static", post.FileName+".html"))
-		if err != nil{
-			log.Fatalf("Error creating %s.html file: %v", post.FileName, err)
-		}
-		defer htmlFile.Close()
-
-		renderErr := pr.Render(htmlFile, post)
-		if renderErr != nil{
-			log.Fatalf("Error rendering %s.md file: %v", post.FileName, err)
-		}
 	}
 }

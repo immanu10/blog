@@ -1,7 +1,12 @@
 {{template "top" .}}
 <ul>
 {{range .Posts}}
-    <li><a href="{{.FileName}}.html">{{.Title}}</a></li>
+    <li id="posts-list-item">
+        <a href="{{.FileName}}.html">
+            <span>{{.Title}}</span> 
+            <span id="blog-date">{{.Date}}</span>
+        </a>
+    </li>
 {{end}}
 </ul> 
 {{template "bottom" .}}
