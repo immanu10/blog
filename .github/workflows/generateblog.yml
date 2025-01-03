@@ -20,11 +20,11 @@ jobs:
         run: go run cmd/main.go
       - name: Commit and Push
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          if [-n '$(git status --porcelain static)']; then
-            git add static
-            git commit -m 'Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")'
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")"
             git push
           else
             echo "No changes detected in static folder"
