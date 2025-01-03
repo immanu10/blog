@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immanu10 - Reversing a Linked List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="/blog">immanu10s blog</h1></a>
+        <div>
+            <a href="https://github.com/immanu10/" target="_blank">github</a>
+            <a href="https://x.com/immanu10x" target="_blank">twitter</a>
+        </div>
+    </nav>
+    <main>
+
+<div>
+    <time>03-Jan-2025</time>
+</div>
+<h1>Reversing a Linked List</h1>
+<br>
+<div id="blog-content"><p>A linked list is a linear data structure where elements are stored in nodes. Each node points to the next node in the sequence.  Reversing a linked list is a common interview question and a fundamental operation in list manipulation.  It involves changing the direction of the pointers so that the last node becomes the head and the previous head becomes the tail.</p>
+
+<p>There are several ways to reverse a linked list. One of the most common approaches is the iterative method using three pointers: previous, current, and next.</p>
+
+<p><strong>Iterative Approach:</strong></p>
+
+<pre><code class="language-javascript">class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
+
+function reverseLinkedList(head) {
+  let prev = null;
+  let current = head;
+  let next = null;
+
+  while (current !== null) {
+    next = current.next; // Store the next node
+    current.next = prev;   // Reverse the current node's pointer
+    prev = current;      // Move prev to the current node
+    current = next;      // Move current to the stored next node
+  }
+
+  return prev; // prev is now the new head
+}
+
+
+// Example usage:
+const node1 = new Node(1);
+const node2 = new Node(2);
+const node3 = new Node(3);
+const node4 = new Node(4);
+
+node1.next = node2;
+node2.next = node3;
+node3.next = node4;
+
+let head = node1;
+console.log(&quot;Original Linked List:&quot;);
+printLinkedList(head);
+
+head = reverseLinkedList(head);
+
+console.log(&quot;\nReversed Linked List:&quot;);
+printLinkedList(head);
+
+
+function printLinkedList(head) {
+  let current = head;
+  while (current !== null) {
+    process.stdout.write(current.data + &quot; -&gt; &quot;);
+    current = current.next;
+  }
+  console.log(&quot;null&quot;);
+}
+
+</code></pre>
+
+<p><strong>Explanation:</strong></p>
+
+<ol>
+<li><p><strong>Initialization:</strong></p>
+
+<ul>
+<li><code>prev</code> is initialized to <code>null</code> as the initial previous node of the head is null.</li>
+<li><code>current</code> points to the head of the linked list.</li>
+<li><code>next</code> is initialized to <code>null</code>.</li>
+</ul></li>
+
+<li><p><strong>Iteration:</strong> The <code>while</code> loop continues as long as <code>current</code> is not <code>null</code>.</p>
+
+<ul>
+<li><code>next = current.next</code>: Stores the next node in the original list. This ensures we don&rsquo;t lose the reference to the next node when we modify <code>current.next</code>.</li>
+<li><code>current.next = prev</code>: Reverses the pointer of the current node to point to the previous node.</li>
+<li><code>prev = current</code>: Moves <code>prev</code> forward, making the current node the new previous node for the next iteration.</li>
+<li><code>current = next</code>: Moves <code>current</code> forward to the previously stored next node.</li>
+</ul></li>
+
+<li><p><strong>Return:</strong> After the loop finishes, <code>prev</code> will point to the new head (originally the tail), so we return <code>prev</code>.</p></li>
+</ol>
+
+<p><strong>Key Points:</strong></p>
+
+<ul>
+<li>This iterative approach is generally preferred for its efficiency and simplicity.</li>
+<li>It modifies the list in-place, meaning no extra space is used (constant space complexity).</li>
+<li>Understanding the pointer manipulations is crucial to grasping how the reversal works.</li>
+<li>This method can be easily adapted to other languages.</li>
+</ul>
+
+<p>By understanding this iterative approach, you can confidently tackle linked list reversal problems in your interviews and coding tasks.</p>
+</div>
+
+    </main>
+</body>
+</html>
