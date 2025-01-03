@@ -24,12 +24,12 @@ jobs:
 
       - name: Commit and Push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-          if [-n "$(git status --porcelain static)"]; then
+          if [-n '$(git status --porcelain static)']; then
             git add static
-            git commit -m "Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")"
+            git commit -m 'Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")'
             git push
           else
             echo "No changes detected in static folder"
