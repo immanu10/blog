@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+          with: 
+            token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -19,15 +21,13 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: go run cmd/main.go
       - name: Commit and Push
-        env:
-          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")"
-            git push https://${PAT}@github.com/${{github.repository}}.git HEAD:main
+            git push 
           else
             echo "No changes detected in static folder"
           fi
