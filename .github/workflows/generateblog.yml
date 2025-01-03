@@ -1,0 +1,35 @@
+name: Generate Static Blog Post every night
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23
+
+      - name: Generate Blog Post
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: go run cmd/main.go
+
+      - name: Commit and Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [-n "$(git status --porcelain static)"]; then
+            git add static
+            git commit -m "Update static files on $(date -u +"%Y-%m-%d T%H:%M:%SZ")"
+            git push
+          else
+            echo "No changes detected in static folder"

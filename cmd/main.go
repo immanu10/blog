@@ -18,6 +18,12 @@ func main(){
 			return
 		}
 	}
+
+	pr, err := blog.NewPostRenderer()
+	if err != nil{
+		panic(err)
+	}
+
 	scanner, err := genblogai.GenerateBlogFromAI()
 	if err != nil{
 		log.Fatalf("Error generating blog from AI: %v", err)
@@ -39,10 +45,6 @@ func main(){
 		log.Fatalf("Error writing AI content to %s file: %v", blogFilename, err)
 	}
 
-	pr, err := blog.NewPostRenderer()
-	if err != nil{
-		panic(err)
-	}
 
 	htmlFile, err := os.Create(path.Join("static", blogFilename+".html"))
 	if err != nil{
@@ -63,7 +65,7 @@ func main(){
 
 	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
 	if err != nil{
-		panic(err)
+		log.Fatalf("Error reading posts from filesystem: %v", err)
 	}
 
 
@@ -88,6 +90,9 @@ func readAndRenderAllPost(){
 	}
 
 	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
+	if err != nil{
+		log.Fatalf("Error reading posts from filesystem: %v", err)
+	}
 
 	for _, post := range posts{
 		htmlFile, err := os.Create(path.Join("static", post.FileName+".html"))
