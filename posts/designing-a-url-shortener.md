@@ -1,69 +1,72 @@
 Title: Designing a URL Shortener
-Date: 03-Jan-2025
+Date: 05-Jan-2025
 
-A URL shortener, at its core, transforms a long URL into a shorter, more manageable one.  Think bit.ly or tinyurl.com.  When a user submits a long URL, the system generates a unique short code that redirects to the original URL when accessed.  This seemingly simple service presents interesting design challenges at scale.
+A URL shortener, at its core, transforms long URLs into shorter, more manageable ones.  Think TinyURL or bit.ly.  Behind the scenes, it's a fascinating exercise in distributed systems design. Let's break down the key components.
 
-Here's a breakdown of the key components:
+**1. Hashing:**
 
-**1. Hashing Algorithm:**
+The heart of a URL shortener is its hashing algorithm.  This algorithm takes an arbitrary input (the long URL) and outputs a fixed-length string. This short string becomes the "shortened" URL.  Several hashing algorithms are suitable, each with tradeoffs:
 
-This is the heart of the system.  It converts a long URL into a short code.  A good hashing algorithm should be:
+* **MD5/SHA-256:**  Cryptographic hashes, excellent for security and collision resistance, but produce longer outputs.  Not ideal for concise short URLs.
+* **MurmurHash/FNV:** Non-cryptographic, optimized for speed and shorter outputs, but with a slightly higher collision risk.
+* **Base62 encoding:**  Crucial for representing the hash as a readable string. It uses a-z, A-Z, and 0-9, allowing for a more compact representation than just hexadecimal.
 
-* **Collision-resistant:**  Minimize the chance of two different long URLs producing the same short code.
-* **Reversible:**  Given a short code, the system should be able to retrieve the original long URL.
-* **Short Code Generation:** Produce short codes that are compact and user-friendly.
+Example in Go:
 
-Popular choices include MD5, SHA-256, or custom base-62 encoding.  A simple base-62 implementation in JavaScript:
+```go
+import (
+	"crypto/sha256"
+	"encoding/base64"
+	"fmt"
+	"math/big"
+)
 
-```javascript
-const BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-function shorten(longUrl, id) {
-  let shortUrl = "";
-  while (id > 0) {
-    shortUrl = BASE62.charAt(id % 62) + shortUrl;
-    id = Math.floor(id / 62);
-  }
-  return shortUrl;
+func shortenURL(longURL string) string {
+    hash := sha256.Sum256([]byte(longURL))
+		//Base64 encode the hash
+		encodedHash := base64.URLEncoding.EncodeToString(hash)
+		//For Base 62 a custom implementation is required
+		//For demonstration, simply taking a fixed number of characters
+		shortURL := encodedHash[:8] //Take first 8 characters
+		return shortURL
 }
 
-// Example
-console.log(shorten("https://www.example.com/very/long/url", 12345)); // Output: 3d7
+
+func main() {
+	longURL := "https://www.example.com/very/long/url/path"
+	shortURL := shortenURL(longURL)
+	fmt.Println("Shortened URL:", shortURL)
+}
+
+
 ```
 
 **2. Storage:**
 
-The system needs to store the mapping between short codes and long URLs.  Key-value stores like Redis are well-suited for this purpose due to their fast read and write speeds.  A relational database like PostgreSQL can also be used for more complex features like analytics.
+We need a persistent store to map short URLs back to their original counterparts.  Several options exist:
 
-**3. API Endpoint:**
+* **Key-Value Store (Redis, Memcached):**  Excellent for fast lookups, crucial for URL redirection.  Suitable for high read volumes.
+* **Relational Database (MySQL, PostgreSQL):** Offers data integrity and ACID properties, helpful for analytics and managing URL metadata (e.g., creation date, click counts).
 
-The system needs an API endpoint to accept long URLs and return short codes.  This endpoint should handle:
+**3. Handling Collisions:**
 
-* **URL Validation:** Ensure submitted URLs are valid.
-* **Hashing:** Generate the short code.
-* **Storage:** Save the mapping.
-* **Response:** Return the short code to the user.
+Even with good hashing algorithms, collisions (where two long URLs produce the same short URL) are possible. Strategies for handling them include:
 
-**4. Redirection Service:**
-
-When a user accesses a short URL, the system should redirect them to the original long URL.  This involves:
-
-* **Lookup:** Retrieve the original long URL based on the short code.
-* **Redirection:** Send an HTTP redirect response to the user's browser.
+* **Append a counter/random characters:**  If a collision occurs, append a counter or random characters to the hash to make it unique.
+* **Pre-generate short codes:** Avoid collisions entirely by pre-generating unique short codes and assigning them to long URLs as they come in.
 
 
-**5. Optional Components:**
+**4. Scalability:**
 
-* **Custom Short URLs:**  Allowing users to choose their short codes.  Requires collision checking.
-* **Analytics:** Tracking click-through rates, geographic location, etc.
-* **Expiration:** Setting expiry dates for short URLs.
+* **Sharding:** Distribute the data across multiple servers to handle high traffic volumes. The short URL can be used to determine the appropriate shard.
+* **Caching:** Employ caching mechanisms at various levels (CDN, server-side) to reduce database load.
+* **Load Balancing:** Distribute traffic across multiple servers handling lookups and redirects.
 
-**Scalability Considerations:**
+**5. Optional Features:**
 
-* **Database Sharding:** Distribute the data across multiple database servers to handle high traffic.
-* **Caching:** Cache frequently accessed URLs to reduce database load.
-* **Load Balancing:** Distribute traffic across multiple servers to ensure high availability.
+* **Custom Short URLs:** Allow users to customize their short URLs.
+* **Analytics:** Track click-through rates and other metrics.
+* **Expiration:**  Set expiration dates for short URLs.
 
-
-
-This overview provides a starting point for designing a URL shortening service.  Remember to consider the specific requirements and constraints of your application when making design choices.
+A URL shortener, while seemingly simple, involves a nuanced interplay of hashing, storage, and scalable system design. Understanding these concepts is key to crafting an efficient and robust solution.
