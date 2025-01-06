@@ -37,7 +37,12 @@ func main(){
 
 func createAndRenderAIPost(pr *blog.PostRenderer){
 
-	scanner, err := genblogai.GenerateBlogFromAI()
+	posts, err := blog.NewPostFromFs(os.DirFS("posts"))
+	if err != nil{
+		log.Fatalf("Error reading posts from filesystem: %v", err)
+	}
+
+	scanner, err := genblogai.GenerateBlogFromAI(posts)
 	if err != nil{
 		log.Fatalf("Error generating blog from AI: %v", err)
 	}

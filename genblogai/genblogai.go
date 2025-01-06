@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/google/generative-ai-go/genai"
+	"github.com/immanu10/blog"
 	"google.golang.org/api/option"
 )
 
@@ -19,10 +20,37 @@ const (
 	systemInstruction = "You are a technical blog writer. Pick any single concept from the topic provided by the user and generator a .md string/blog post. Follow this template structure:\nTitle: A very very short concise title.\nA well-structured explanation of the concept with examples or code snippets if required.(Do not use python, use Go or JavaScript)"
 )
 
-var topicsList = []string{"Javascript Interview Questions", "Typescript tips and tricks","Go conpects and features","High Level System Design Interview Questions","Low Level System Design Interview Questions", "DSA Interview Questions","DSA problem solving techniques", "Vim tips and tricks","Vim motion","React Interview Questions"}
+var topicsList = []string{
+	"JavaScript",
+	"TypeScript Ecosystem and Best Practices",
+	"TypeScript tips and tricks",
+	"Go Programming Language",
+	"Key concepts and features of Go",
+	"High Level System Design",
+	"Low Level System Design", 
+	"Distributed Systems",
+	"API Design and Microservices",
+	"Data Structure and Algorithms",
+	"Techniques for Solving DSA problems", 
+	"Vim",
+	"Vim tips and tricks",
+	"Vim motion",
+	"React Framework",
+	"Frontend Development",
+	"Web fundamentals",
+	"Performance Optimization for Web Applications",
+	"CSS and Responsive Design",
+}
 
 
-func GenerateBlogFromAI() (*bufio.Scanner, error){
+func GenerateBlogFromAI(prevPosts []blog.Post) (*bufio.Scanner, error){
+	
+	var titles []string
+	for _,post := range prevPosts{
+		titles = append(titles, post.Title)
+	}  
+	prevTitles := strings.Join(titles, ", ")
+
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx,option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
 	if err != nil{
@@ -42,8 +70,9 @@ func GenerateBlogFromAI() (*bufio.Scanner, error){
 	  }
 
 	randomTopic := topicsList[rand.Intn(len(topicsList))]
+	prompt := fmt.Sprintf("Topic is %s. Do not write about the following previously generated blogs (titles): %s",randomTopic, prevTitles)
 
-	resp, err := model.GenerateContent(ctx, genai.Text("Topics is "+randomTopic))
+	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil{
 		return nil, err
 	}
