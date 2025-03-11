@@ -21,62 +21,69 @@
     <main>
 
 <div>
-    <time>17-Feb-2025</time>
+    <time>11-Mar-2025</time>
 </div>
 <h1>Code Splitting</h1>
 <br>
-<div id="blog-content"><p>Code splitting is a powerful technique for optimizing web application performance, particularly for large JavaScript applications. It involves dividing your application&rsquo;s codebase into smaller, manageable chunks that can be loaded on demand. This contrasts with the traditional approach of bundling all JavaScript into a single, large file, which can lead to slow initial load times and a poor user experience.</p>
+<div id="blog-content"><p>Code splitting is a powerful technique for optimizing web application performance, especially for large JavaScript applications. It involves splitting the application&rsquo;s codebase into smaller, manageable chunks that can be loaded on demand. This can significantly improve initial load times and overall user experience.</p>
 
-<p>By loading only the necessary code for the initial page view, you significantly reduce the amount of JavaScript that needs to be parsed and executed by the browser. This can dramatically improve the Time to First Paint (TTFP) and Time to Interactive (TTI) metrics, leading to a faster and more responsive user experience.</p>
+<p><strong>Why Code Splitting?</strong></p>
 
-<p>Here&rsquo;s how you can implement code splitting with JavaScript and dynamic imports:</p>
+<p>When a user visits a web page, the browser downloads all the necessary resources, including JavaScript files. For large applications, this can lead to a significant initial download, resulting in slow startup times.  The user is left staring at a blank screen or a loading indicator for an extended period before they can interact with the page. Code splitting addresses this problem.</p>
+
+<p><strong>How Code Splitting Works</strong></p>
+
+<p>Instead of bundling the entire application into a single large JavaScript file, code splitting divides the codebase into smaller chunks. These chunks can correspond to different routes, components, or functionalities of the application. The initial download only includes the code necessary to render the initial view. Other chunks are loaded on demand as the user navigates through the application or interacts with specific features.</p>
+
+<p><strong>Example using JavaScript and dynamic imports:</strong></p>
 
 <pre><code class="language-javascript">// main.js
-const loadComponent = async (componentName) =&gt; {
-  const { default: Component } = await import(`./components/${componentName}.js`);
-  // Render the component
-  const container = document.getElementById('container');
-  const componentInstance = new Component(container); 
-  componentInstance.render();
-};
-
-// Event listener for navigation or user interaction
-document.getElementById('myButton').addEventListener('click', () =&gt; {
-  loadComponent('MyComponent'); // Load and render MyComponent on demand
+import('./moduleA').then(module =&gt; {
+  module.functionA(); // Use functionality from moduleA
 });
 
-// components/MyComponent.js
-class MyComponent {
-    constructor(container) {
-        this.container = container;
-    }
-    render() {
-        this.container.innerHTML = '&lt;h1&gt;Hello from MyComponent!&lt;/h1&gt;';
-    }
+
+// moduleA.js
+export function functionA() {
+  console.log(&quot;Function A executed&quot;);
 }
 
-export default MyComponent;
+// Another example triggering a component load on a button click:
+const LoadComponent = () =&gt; {
 
+    const [Component, setComponent] = useState(null);
+
+    const handleClick = async () =&gt; {
+        const module = await import('./MyComponent');
+        setComponent(module.default)
+    }
+
+    return (
+        &lt;div&gt;
+            &lt;button onClick={handleClick}&gt;Load Component&lt;/button&gt;
+            {Component &amp;&amp; &lt;Component /&gt;}
+        &lt;/div&gt;
+    )
+
+}
 </code></pre>
 
-<p>In this example:</p>
-
-<ol>
-<li><code>main.js</code> contains the initial code that&rsquo;s loaded when the page first renders.</li>
-<li>The <code>loadComponent</code> function uses dynamic <code>import()</code> to load component modules on demand. The <code>import()</code> function returns a promise that resolves to the module&rsquo;s exports.</li>
-<li>When the button is clicked, <code>loadComponent</code> is called, fetching and rendering <code>MyComponent</code> only when needed.</li>
-</ol>
+<p>In this example, <code>moduleA.js</code> is loaded only when it&rsquo;s needed, after the initial load.  The <code>import()</code> function returns a promise which resolves with the module when it has been downloaded and executed.</p>
 
 <p><strong>Benefits of Code Splitting:</strong></p>
 
 <ul>
-<li><strong>Faster Initial Load Time:</strong> Reduced initial JavaScript bundle size leads to quicker page loading.</li>
-<li><strong>Improved User Experience:</strong> Users can interact with the page sooner, even if some components are still loading in the background.</li>
-<li><strong>Better Resource Management:</strong> The browser downloads only the necessary code, conserving bandwidth and processing power.</li>
-<li><strong>Enhanced Caching:</strong> Smaller chunks of code are more likely to be cached effectively by the browser, further improving subsequent load times.</li>
+<li><strong>Faster Initial Load Times:</strong>  By loading only the essential JavaScript initially, the initial page load becomes significantly faster.</li>
+<li><strong>Improved User Experience:</strong>  Users can start interacting with the page sooner, even if the entire application hasn&rsquo;t fully loaded.</li>
+<li><strong>Reduced Bandwidth Consumption:</strong> Users only download the code they need, reducing overall bandwidth usage.</li>
+<li><strong>Better Caching:</strong> Smaller code chunks can be cached more efficiently by the browser.</li>
 </ul>
 
-<p>Code splitting, therefore, is a valuable technique to optimize web application performance by delivering a faster, more efficient, and responsive user experience. It allows you to prioritize the loading of essential resources, improving key performance indicators and ensuring a smoother experience for your users.</p>
+<p><strong>Implementation with bundlers:</strong></p>
+
+<p>Most modern JavaScript bundlers, such as Webpack, Rollup, and Parcel, have built-in support for code splitting. They offer various techniques, including dynamic imports, to achieve this. Consult the documentation of your chosen bundler for specific instructions on how to implement code splitting.</p>
+
+<p>Code splitting is a valuable technique for optimizing the performance of your web applications. By reducing initial load times and improving the user experience, you can create more engaging and efficient web applications.</p>
 </div>
 
     </main>
