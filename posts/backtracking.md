@@ -1,80 +1,83 @@
 Title: Backtracking
-Date: 20-Jan-2025
+Date: 14-Mar-2025
 
-Backtracking is a powerful algorithmic technique used to solve problems that involve exploring a search space to find a solution. It works by incrementally building a solution, one step at a time. If a partial solution is found to be invalid or does not lead to a complete solution, the algorithm "backtracks" to the previous step and tries a different path.  Think of it as exploring a maze – if you hit a dead end, you retrace your steps and try a different route.
+Backtracking is a powerful algorithmic technique used to solve problems that involve exploring multiple possibilities and finding a solution that satisfies certain constraints.  It's a form of depth-first search where you incrementally build a solution, and if a partial solution violates the constraints, you "backtrack" – undo the last step – and try a different path.  Think of it like navigating a maze: you try one path, and if it leads to a dead end, you go back to the last intersection and try a different path.
 
-**How Backtracking Works**
+Here's a breakdown of how backtracking works:
 
-Backtracking employs a recursive approach and typically follows these steps:
+1. **Start with an empty solution:**  Initialize an empty solution or a starting point.
 
-1. **Base Case:**  Define a condition that indicates whether a solution has been found or if the search space has been exhausted. This is the termination condition for the recursion.
+2. **Make a choice:** Select a possible next step or component to add to the solution.
 
-2. **Choices:** At each step, identify the possible choices or decisions that can be made.
+3. **Check constraints:** If the current choice violates any problem constraints, backtrack.  That is, undo the choice made in step 2 and return to the previous state.
 
-3. **Constraints:** Implement rules or conditions that determine if a choice is valid or feasible. This prevents exploring dead ends.
+4. **Recursive call:** If the current choice is valid, add it to the solution and recursively call the backtracking function to continue building the solution.
 
-4. **Recursion:** For each valid choice, recursively call the backtracking function to explore the next step in the search space.
+5. **Base case:**  If a complete solution is found that satisfies all constraints, return the solution.
 
-5. **Backtracking:** If a recursive call returns without finding a solution, undo the choice made in the current step (i.e., backtrack) and try the next available choice.
+6. **Backtrack:** If no valid choices remain at the current level, backtrack and explore different paths.
 
+**Example: N-Queens Problem (JavaScript)**
 
-**Example: N-Queens Problem**
-
-The N-Queens problem is a classic example where backtracking is effective. The goal is to place N chess queens on an N×N chessboard such that no two queens threaten each other (no two queens share the same row, column, or diagonal).
+The N-Queens problem asks you to place N chess queens on an N×N chessboard such that no two queens threaten each other (no two queens share the same row, column, or diagonal).
 
 ```javascript
 function isSafe(board, row, col, N) {
+  // Check the column
   for (let i = 0; i < row; i++) {
-    if (board[i] === col || Math.abs(board[i] - col) === row - i) {
+    if (board[i][col]) {
       return false;
     }
   }
+
+  // Check upper left diagonal
+  for (let i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+    if (board[i][j]) {
+      return false;
+    }
+  }
+
+  // Check upper right diagonal
+  for (let i = row, j = col; i >= 0 && j < N; i--, j++) {
+    if (board[i][j]) {
+      return false;
+    }
+  }
+
   return true;
 }
 
 function solveNQueensUtil(board, row, N, solutions) {
   if (row === N) {
-    solutions.push([...board]); // Found a solution, add a copy
+    const solution = board.map(row => row.join('')); // Convert to string format
+    solutions.push(solution);
     return;
   }
 
   for (let col = 0; col < N; col++) {
     if (isSafe(board, row, col, N)) {
-      board[row] = col;
+      board[row][col] = 1; // Place the queen
       solveNQueensUtil(board, row + 1, N, solutions);
-      // Backtrack implicitly – no need to reset board[row] as next loop iteration overwrites
+      board[row][col] = 0; // Backtrack (remove the queen)
     }
   }
 }
 
 function solveNQueens(N) {
-  const board = new Array(N);
+  const board = Array(N).fill(0).map(() => Array(N).fill(0));
   const solutions = [];
   solveNQueensUtil(board, 0, N, solutions);
   return solutions;
 }
 
+
 const solutions = solveNQueens(4);
 console.log(solutions);
+
+
 ```
 
-**Explanation**
-
-- `isSafe()`: Checks if placing a queen at `(row, col)` is safe.
-- `solveNQueensUtil()`: The recursive backtracking function. It tries placing a queen in each column of the current row.
-- `solveNQueens()`: Initializes the board and starts the backtracking process.
-
-**Key Advantages of Backtracking**
-
-- **Simplicity:**  Relatively easy to implement.
-- **Versatility:**  Can be adapted to various problems.
-- **Finding All Solutions:** Can be used to find all possible solutions or a single solution.
-
-**Limitations**
-
-- **Time Complexity:** Can be computationally expensive for larger search spaces, potentially leading to exponential time complexity.
-- **Memory Usage:**  Recursive calls can consume significant stack space, especially for deep recursion.
+In this example, `isSafe` checks if placing a queen at `(row, col)` is safe.  `solveNQueensUtil` is the recursive backtracking function.  When a queen is placed successfully, the function recursively calls itself for the next row.  If no safe position is found in a row, the function backtracks by removing the queen from the previous position and trying a different column.
 
 
-
-Backtracking is a fundamental technique in problem-solving. Understanding its core principles opens up possibilities to tackle a wide range of challenges effectively.
+Backtracking is a fundamental technique applicable to a wide range of problems, including constraint satisfaction, graph traversal, and combinatorial search.  Understanding this concept is crucial for any programmer tackling complex algorithmic challenges.
