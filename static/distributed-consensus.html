@@ -21,76 +21,77 @@
     <main>
 
 <div>
-    <time>01-May-2025</time>
+    <time>05-May-2025</time>
 </div>
 <h1>Distributed Consensus</h1>
 <br>
-<div id="blog-content"><p>Distributed consensus is a fundamental problem in distributed systems. It involves getting a group of machines in a network to agree on a single value, even in the presence of failures like network partitions or node crashes.  This agreement is crucial for maintaining consistency and reliability in distributed applications.</p>
-
-<p>Several algorithms tackle this problem, each with its trade-offs.  Two prominent examples are Paxos and Raft. Let&rsquo;s explore the general concepts involved in achieving distributed consensus.</p>
-
-<p><strong>Challenges:</strong></p>
+<div id="blog-content"><p>A fundamental problem in distributed systems is achieving consensus among multiple nodes.  This means getting all nodes to agree on a single value, even in the presence of failures like network partitions or node crashes.  Distributed consensus is crucial for various applications, such as:</p>
 
 <ul>
-<li><strong>Network Failures:</strong> Messages can be lost, delayed, or delivered out of order.</li>
-<li><strong>Node Failures:</strong>  Machines can crash or become unresponsive.</li>
-<li><strong>Byzantine Failures:</strong>  Nodes can exhibit arbitrary behavior, including malicious actions.</li>
+<li><strong>Leader election:</strong> Choosing a single node to coordinate tasks.</li>
+<li><strong>Distributed transactions:</strong> Ensuring data consistency across multiple databases.</li>
+<li><strong>State machine replication:</strong> Maintaining a consistent state across a cluster of servers.</li>
 </ul>
 
-<p><strong>Key Properties of a Consensus Algorithm:</strong></p>
+<p>Several algorithms address distributed consensus. Let&rsquo;s explore Paxos, a widely known, albeit complex, solution.</p>
 
-<ul>
-<li><strong>Termination:</strong> Every correct process eventually decides on a value.</li>
-<li><strong>Agreement:</strong> All correct processes decide on the same value.</li>
-<li><strong>Integrity:</strong> The decided value was proposed by some process.</li>
-<li><strong>Fault Tolerance:</strong> The algorithm should function correctly even if some processes fail.</li>
-</ul>
+<p><strong>Paxos Explained</strong></p>
 
-<p><strong>Simplified Example (Illustrative, Not a Real-World Algorithm):</strong></p>
-
-<p>Imagine three servers needing to agree on whether to commit a transaction.  A simple (and not very robust) approach could be:</p>
+<p>Paxos operates in three phases:</p>
 
 <ol>
-<li><strong>Proposal:</strong> A server proposes &ldquo;commit&rdquo; or &ldquo;abort.&rdquo;</li>
-<li><strong>Voting:</strong> The proposer sends its proposal to all servers, including itself.</li>
-<li><strong>Decision:</strong> Each server votes. If a server receives a majority of votes for a particular value, it decides on that value.</li>
+<li><p><strong>Prepare:</strong> A proposer (a node proposing a value) chooses a unique proposal number and sends a &ldquo;Prepare&rdquo; message to a majority of acceptors (nodes that can accept proposed values).</p></li>
+
+<li><p><strong>Promise:</strong> If an acceptor receives a &ldquo;Prepare&rdquo; message with a number higher than any it has seen, it promises not to accept any proposals with lower numbers and sends back information about any previously accepted values.</p></li>
+
+<li><p><strong>Accept:</strong> If the proposer receives promises from a majority of acceptors, it chooses a value (either its proposed value or a previously accepted one). It then sends an &ldquo;Accept&rdquo; message containing the chosen value and proposal number.</p></li>
+
+<li><p><strong>Accepted:</strong>  If an acceptor receives an &ldquo;Accept&rdquo; message, it accepts the value unless it has already promised to ignore proposals with that number or lower.</p></li>
 </ol>
 
-<pre><code class="language-javascript">// Illustrative example - not a production-ready consensus algorithm
-const servers = [&quot;server1&quot;, &quot;server2&quot;, &quot;server3&quot;];
-let votes = { commit: 0, abort: 0 };
+<p>Here’s a simplified example using JavaScript illustrating message passing:</p>
 
-function propose(proposal) {
-  servers.forEach(server =&gt; {
-    // Simulate voting (in reality, network communication involved)
-    const vote = simulateVote(server, proposal);
-    votes[vote]++;
-  });
+<pre><code class="language-javascript">// Acceptor
+class Acceptor {
+  constructor() {
+    this.promisedNumber = 0;
+    this.acceptedValue = null;
+    this.acceptedNumber = 0;
+  }
 
-  if (votes.commit &gt; servers.length / 2) {
-    console.log(&quot;Consensus reached: Commit&quot;);
-  } else if (votes.abort &gt; servers.length / 2) {
-    console.log(&quot;Consensus reached: Abort&quot;);
-  } else {
-    console.log(&quot;No consensus reached&quot;);
+  handlePrepare(proposalNumber) {
+    if (proposalNumber &gt; this.promisedNumber) {
+      this.promisedNumber = proposalNumber;
+      return { promise: true, acceptedValue: this.acceptedValue, acceptedNumber: this.acceptedNumber };
+    }
+    return { promise: false };
+  }
+
+  handleAccept(proposalNumber, value) {
+    if (proposalNumber &gt;= this.promisedNumber) {
+      this.acceptedValue = value;
+      this.acceptedNumber = proposalNumber;
+      return { accepted: true };
+    }
+    return { accepted: false };
   }
 }
 
-function simulateVote(server, proposal) {
-  // Simulate potential server behavior (in reality, more complex logic)
-  if (Math.random() &lt; 0.8) { // 80% chance of agreeing with the proposal
-    return proposal;
-  } else {
-    return proposal === &quot;commit&quot; ? &quot;abort&quot; : &quot;commit&quot;;
-  }
-}
+// Example usage
+const acceptor1 = new Acceptor();
+const acceptor2 = new Acceptor();
+const acceptor3 = new Acceptor();
 
-propose(&quot;commit&quot;); // Example: propose &quot;commit&quot;
+console.log(acceptor1.handlePrepare(1)); // { promise: true, acceptedValue: null, acceptedNumber: 0 }
+console.log(acceptor1.handleAccept(1, &quot;Value 1&quot;)); // { accepted: true }
+console.log(acceptor1.handlePrepare(2)); // { promise: true, acceptedValue: 'Value 1', acceptedNumber: 1 }
+
+
 </code></pre>
 
-<p><strong>Real-world algorithms like Paxos and Raft are significantly more complex</strong> to handle various failure scenarios and ensure safety and liveness properties. They typically involve multiple rounds of communication, leader election, log replication, and other mechanisms.</p>
+<p>This snippet focuses on the core message exchange within Paxos, leaving out the proposer logic and complex scenarios like multiple proposers.  Real-world implementations involve handling failures, timeouts, and ensuring liveness.</p>
 
-<p>Understanding the challenges and properties of distributed consensus is vital for designing and working with reliable distributed systems.  Choosing the right consensus algorithm depends on the specific application&rsquo;s needs and fault-tolerance requirements.</p>
+<p>Paxos guarantees safety (only a single value is chosen) and eventual liveness (a value will eventually be chosen if a majority of nodes are functioning).  However, it&rsquo;s notoriously difficult to implement and understand fully. Other consensus algorithms like Raft offer simpler implementations while maintaining similar guarantees.</p>
 </div>
 
     </main>
